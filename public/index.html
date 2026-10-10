@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sales Force Dashboard</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232a78d6'/%3E%3Cpath d='M7 22l6-7 5 4 7-9' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div id="login" class="login" hidden>
+  <form id="loginForm" class="login-card">
+    <div class="brand big"><span class="logo"></span>Sales Force Dashboard</div>
+    <p class="muted">Sign in to view sales, orders and returns.</p>
+    <label>User name<input name="user" autocomplete="username" required></label>
+    <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+    <div id="loginErr" class="err" hidden></div>
+    <button class="btn primary" type="submit">Sign in</button>
+  </form>
+</div>
+
+<div id="pwModal" class="login" hidden>
+  <form id="pwForm" class="login-card">
+    <h2 id="pwTitle">Change password</h2>
+    <p class="muted small" id="pwNote" style="margin:0"></p>
+    <label>Current password<input name="current" type="password" autocomplete="current-password" required></label>
+    <label>New password<input name="password" type="password" autocomplete="new-password" minlength="8" required></label>
+    <label>New password again<input name="confirm" type="password" autocomplete="new-password" minlength="8" required></label>
+    <div id="pwErr" class="err" hidden></div>
+    <div style="display:flex;gap:8px"><button class="btn primary" type="submit">Save password</button><button class="btn" type="button" id="pwCancel">Cancel</button></div>
+  </form>
+</div>
+
+<div id="app" class="app" hidden>
+  <aside class="side" id="side">
+    <div class="brand"><span class="logo"></span>Sales Force</div>
+    <nav id="nav">
+      <a href="#/overview" data-page="overview"><i>◧</i>Overview</a>
+      <a href="#/orders" data-page="orders"><i>☰</i>Sales orders</a>
+      <a href="#/track" data-page="track"><i>⌕</i>Track a document</a>
+      <a href="#/stock" data-page="stock"><i>▦</i>Item stock</a>
+      <a href="#/pending" data-page="pending"><i>⏳</i>Approvals</a>
+      <a href="#/not-issued" data-page="not-issued"><i>⚠</i>Not issued</a>
+      <a href="#/invoices" data-page="invoices"><i>₨</i>Invoices</a>
+      <a href="#/returns" data-page="returns"><i>↩</i>Returns</a>
+      <a href="#/quotations" data-page="quotations"><i>✎</i>Quotations</a>
+      <a href="#/reps" data-page="reps"><i>👤</i>Sales reps</a>
+      <a href="#/customers" data-page="customers"><i>🏪</i>Customers</a>
+      <div class="nav-sec">SAP analytics</div>
+      <a href="#/sl-sales" data-page="sl-sales"><i>📈</i>Sales &amp; margin</a>
+      <a href="#/sl-products" data-page="sl-products"><i>📦</i>Products &amp; brands</a>
+      <a href="#/sl-grades" data-page="sl-grades"><i>🏷</i>Item grades</a>
+      <a href="#/sl-collections" data-page="sl-collections"><i>💳</i>Collections &amp; cheques</a>
+      <a href="#/sl-credit" data-page="sl-credit"><i>🛡</i>Credit control</a>
+      <div class="nav-sec">Administration</div>
+      <a href="#/admin" data-page="admin"><i>🔑</i>Users &amp; permissions</a>
+    </nav>
+    <div class="side-foot">
+      <div class="me" id="meBox"></div>
+      <button class="btn ghost sm" id="pwBtn">🔒 Password</button>
+      <button class="btn ghost sm" id="themeBtn" title="Switch light / dark">◐ Theme</button>
+      <button class="btn ghost sm" id="logoutBtn">Sign out</button>
+    </div>
+  </aside>
+
+  <div class="main-wrap">
+    <header class="top">
+      <button class="btn ghost sm menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+      <h1 id="pageTitle">Overview</h1>
+      <div class="filters" id="filters">
+        <select id="fPreset" aria-label="Date range">
+          <option value="today">Today</option>
+          <option value="yesterday">Yesterday</option>
+          <option value="last7" selected>Last 7 days</option>
+          <option value="mtd">This month</option>
+          <option value="last30">Last 30 days</option>
+          <option value="lastmonth">Last month</option>
+          <option value="last90">Last 90 days</option>
+          <option value="ytd">This year</option>
+          <option value="all">All dates</option>
+          <option value="custom">Custom…</option>
+        </select>
+        <span class="custom" id="fCustom" hidden>
+          <input type="date" id="fFrom" aria-label="From"> – <input type="date" id="fTo" aria-label="To">
+          <button class="btn sm" id="fApply">Apply</button>
+        </span>
+        <select id="fRep" aria-label="Sales rep"><option value="">All reps</option></select>
+        <input id="fCust" type="search" placeholder="Customer code / name" aria-label="Customer" list="custList">
+        <datalist id="custList"></datalist>
+        <button class="btn sm" id="refreshBtn" title="Fetch again from SAP">⟳ Refresh</button>
+      </div>
+    </header>
+    <div class="progress" id="progress" hidden><div class="bar" id="progressBar"></div><span id="progressText"></span></div>
+    <main id="main"></main>
+    <footer class="foot" id="foot"></footer>
+  </div>
+</div>
+
+<div class="drawer-bg" id="drawerBg" hidden></div>
+<aside class="drawer" id="drawer" hidden>
+  <div class="drawer-head"><h2 id="drawerTitle"></h2><button class="btn ghost sm" id="drawerClose" aria-label="Close">✕</button></div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+<div class="tip" id="tip" hidden></div>
+<div class="toast" id="toast" hidden></div>
+<script src="app.js"></script>
+<script src="sl-pages.js"></script>
+<script src="sl-grades.js"></script>
+<script src="stock.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

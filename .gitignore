@@ -1,0 +1,11 @@
+# secrets: API key, Service Layer password, first-admin password
+.env
+# user accounts (password hashes) and activity log
+data/
+# cached SAP business data (customers, invoices, orders)
+cache/
+node_modules/
+*.log
+*.bak
+*.tmp
+package-lock.json
